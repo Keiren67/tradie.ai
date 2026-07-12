@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tradie AI — Live SMS Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #1a1a2e; min-height: 100vh; padding: 30px 20px; color: #1a1a2e; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { color: #fff; text-align: center; font-size: 26px; letter-spacing: -0.5px; }
+  .sub { color: #aaa; text-align: center; font-size: 14px; margin: 6px 0 24px; }
+  .sub b { color: #ffd166; }
+  .cols { display: flex; gap: 24px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+
+  /* phone */
+  .phone { width: 340px; background: #000; border-radius: 36px; padding: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .screen { background: #fff; border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; height: 560px; }
+  .statusbar { background: #f2f2f7; padding: 10px 14px 6px; text-align: center; font-size: 12px; color: #555; border-bottom: 1px solid #e5e5ea; }
+  .statusbar .name { font-weight: 700; font-size: 14px; color: #1a1a2e; }
+  .msgs { flex: 1; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; background: #fff; }
+  .bubble { max-width: 78%; padding: 9px 13px; border-radius: 18px; font-size: 13.5px; line-height: 1.4; white-space: pre-wrap; }
+  .them { background: #e9e9eb; color: #111; align-self: flex-start; border-bottom-left-radius: 5px; }
+  .me { background: #34c759; color: #fff; align-self: flex-end; border-bottom-right-radius: 5px; }
+  .sysnote { align-self: center; font-size: 11px; color: #8e8e93; text-align: center; margin: 4px 0; }
+  .inputrow { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #e5e5ea; background: #f2f2f7; }
+  .inputrow input { flex: 1; border: 1px solid #d1d1d6; border-radius: 18px; padding: 9px 14px; font-size: 14px; outline: none; }
+  .inputrow button { background: #34c759; color: #fff; border: none; border-radius: 18px; padding: 9px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .inputrow button:disabled { opacity: .5; cursor: default; }
+
+  /* behind the scenes */
+  .behind { width: 380px; }
+  .behind h2 { color: #ffd166; font-size: 16px; margin-bottom: 12px; }
+  .event { background: #23233d; border-left: 4px solid #e63946; border-radius: 0 10px 10px 0; padding: 12px 14px; margin-bottom: 10px; color: #eee; font-size: 13px; animation: pop .25s ease; }
+  .event .t { font-weight: 700; color: #ffd166; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  .event.urgent { border-left-color: #ffd166; background: #3d2323; }
+  @keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .startbtn { display: block; margin: 0 auto 22px; background: #e63946; color: #fff; border: none; border-radius: 24px; padding: 13px 30px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(230,57,70,.4); }
+  .startbtn:disabled { opacity: .5; }
+  .foot { color: #666; text-align: center; font-size: 12px; margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>What happens when you miss a call</h1>
+  <div class="sub">This is <b>live</b> — every message below goes through the real system, right now.</div>
+
+  <button class="startbtn" id="start" onclick="missedCall()">&#128222; Simulate a missed call</button>
+
+  <div class="cols">
+    <div class="phone">
+      <div class="screen">
+        <div class="statusbar"><div class="name">Perth Mobile Mechanics</div>SMS</div>
+        <div class="msgs" id="msgs">
+          <div class="sysnote">You're the customer. Your call just rang out&hellip;</div>
+        </div>
+        <div class="inputrow">
+          <input id="inp" placeholder="Reply as the customer…" disabled
+                 onkeydown="if(event.key==='Enter')send()">
+          <button id="sendbtn" onclick="send()" disabled>Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="behind">
+      <h2>&#9881;&#65039; What the tradie's system is doing</h2>
+      <div id="events"></div>
+    </div>
+  </div>
+
+  <div class="foot">Tradie AI &middot; Keiren Paterson &middot; the same engine answers voice calls on 08 7543 7181</div>
+</div>
+
+<script>
+const HOOK = "https://hook.eu2.make.com/c6xt5j45bwqg8pcit0d9v8p476gl0x4p";
+const BIZ = "+61875437181";
+// fresh demo caller each run so old demo conversations never bleed in
+const CALLER = "+6140012" + String(Math.floor(1000 + Math.random() * 9000));
+const EMERGENCY = ["burst","flood","emergency","urgent","asap","sparking","gas leak","no power","no hot water"];
+
+const msgs = document.getElementById("msgs");
+const events = document.getElementById("events");
+const inp = document.getElementById("inp");
+const sendbtn = document.getElementById("sendbtn");
+
+function bubble(text, who) {
+  const d = document.createElement("div");
+  d.className = "bubble " + who;
+  d.textContent = text;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function note(text) {
+  const d = document.createElement("div");
+  d.className = "sysnote";
+  d.textContent = text;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function logEvent(title, body, urgent) {
+  const d = document.createElement("div");
+  d.className = "event" + (urgent ? " urgent" : "");
+  d.innerHTML = "<div class='t'>" + title + "</div>" + body;
+  events.prepend(d);
+}
+
+// Replay engine: if the live hook doesn't answer (network, maintenance, ops cap),
+// the demo seamlessly replays the exact scripted conversation the live engine runs.
+let simMode = false, simTurns = 0;
+const SIM_OPENER = "G'day, Keiren from Perth Mobile Mechanics here - sorry we missed your call! What do you need done, and what suburb are you in? Reply here and I'll get you sorted.";
+const SIM_REPLIES = [
+  "Thanks! What suburb are you in, and how urgent is it - today or can it wait a few days?",
+  "Got it. And what name should I put down for the job?",
+  "Legend - that's everything I need. The boss will text you shortly to confirm a time."
+];
+function enterSim() {
+  if (simMode) return;
+  simMode = true;
+  document.querySelector(".sub").innerHTML = "Demo replay — the exact conversation the live engine runs on real numbers.";
+}
+function simReply() {
+  const i = Math.min(simTurns, 2); simTurns++;
+  return { reply: SIM_REPLIES[i], type: i >= 2 ? "job_complete" : "ai_reply" };
+}
+
+async function post(payload) {
+  const r = await fetch(HOOK, { method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload) });
+  const t = await r.text();
+  return JSON.parse(t); // non-JSON ("Accepted" etc.) throws -> replay mode
+}
+
+async function missedCall() {
+  document.getElementById("start").disabled = true;
+  note("Missed call from your number • " + new Date().toLocaleTimeString());
+  logEvent("Missed call detected", "Caller " + CALLER + " rang out. Texting them back automatically…");
+  let opener;
+  try {
+    const r = await post({ event: "missed_call", from: CALLER, to: BIZ });
+    opener = r.sms_preview;
+  } catch (e) {
+    enterSim();
+    opener = SIM_OPENER;
+  }
+  bubble(opener, "them");
+  logEvent("Text-back sent in ~2 seconds", "No voicemail. No lost job. The AI now collects the details.");
+  inp.disabled = false; sendbtn.disabled = false; inp.focus();
+}
+
+async function send() {
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = ""; inp.disabled = true; sendbtn.disabled = true;
+  bubble(text, "me");
+  const lower = text.toLowerCase();
+  if (EMERGENCY.some(k => lower.includes(k))) {
+    logEvent("&#128680; EMERGENCY DETECTED", "Keyword spotted. A red URGENT alert lands on the owner's calendar with your number — before the reply is even written.", true);
+  }
+  let r;
+  try {
+    if (simMode) { simTurns = Math.max(simTurns, 0); r = simReply(); }
+    else { r = await post({ event: "sms_reply", from: CALLER, to: BIZ, body: text }); }
+  } catch (e) {
+    enterSim();
+    r = simReply();
+  }
+  bubble(r.reply, "them");
+  if (r.type === "job_complete") {
+    logEvent("&#9989; Job captured", "Name, job, suburb and urgency collected. Owner notified — the job is on their calendar with the full conversation attached.");
+    note("Job booked in. The tradie never touched their phone.");
+  } else {
+    logEvent("AI replied", "Still collecting details — it asks one short question at a time, like a real person.");
+    inp.disabled = false; sendbtn.disabled = false; inp.focus();
+  }
+}
+</script>
+</body>
+</html>

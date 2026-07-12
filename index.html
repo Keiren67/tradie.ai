@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tradie AI — Never lose a job to a missed call | Perth</title>
+<meta name="description" content="Tradie AI texts back every missed call in 2 seconds, collects the job details and books it on your calendar. Built for Perth tradies. $249/mo, first week free.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1a1a2e;
+    --navy2: #23233d;
+    --red: #e63946;
+    --gold: #ffd166;
+    --ink: #1a1a2e;
+    --paper: #ffffff;
+    --soft: #f4f4f8;
+    --muted: #5c5c72;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { letter-spacing: -0.5px; line-height: 1.15; }
+  section { padding: 56px 0; }
+  .kicker { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 14px; }
+  .kicker.on-dark { color: var(--gold); }
+
+  /* ---------- Hero ---------- */
+  .hero { background: var(--navy); color: #fff; padding: 26px 0 64px; overflow: hidden; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 52px; }
+  .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo .dot { color: var(--red); }
+  .logo .ai { color: var(--gold); }
+  .toplink { color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); border-radius: 22px; padding: 9px 18px; white-space: nowrap; }
+  .toplink:hover { background: rgba(255,255,255,.15); }
+  .hero-grid { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; }
+  .hero-copy { flex: 1 1 420px; min-width: 0; }
+  .hero h1 { font-size: clamp(30px, 5.5vw, 46px); font-weight: 800; margin-bottom: 18px; }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero .sub { font-size: clamp(16px, 2.5vw, 19px); color: #c9c9d8; max-width: 34em; margin-bottom: 30px; }
+  .hero .sub b { color: #fff; }
+  .cta { display: inline-block; background: var(--red); color: #fff; text-decoration: none; font-size: 17px; font-weight: 700; border: none; border-radius: 28px; padding: 15px 34px; cursor: pointer; box-shadow: 0 6px 20px rgba(230,57,70,.45); transition: transform .15s ease, box-shadow .15s ease; }
+  .cta:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(230,57,70,.55); }
+  .cta.ghost { background: transparent; border: 2px solid var(--gold); color: var(--gold); box-shadow: none; margin-left: 12px; }
+  .cta.ghost:hover { background: rgba(255,209,102,.1); }
+  .hero-note { margin-top: 18px; font-size: 13px; color: #8f8fa8; }
+  .hero-note b { color: var(--gold); }
+
+  /* hero illustration: pure CSS/SVG phone with bubbles */
+  .hero-art { flex: 0 1 330px; display: flex; justify-content: center; }
+  .mini-phone { width: 250px; background: #000; border-radius: 30px; padding: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.55); transform: rotate(2deg); }
+  .mini-screen { background: #fff; border-radius: 22px; padding: 14px 10px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .mini-head { text-align: center; font-size: 11px; color: #8e8e93; border-bottom: 1px solid #ececf1; padding-bottom: 8px; }
+  .mini-head b { display: block; font-size: 13px; color: var(--navy); }
+  .mb { max-width: 82%; padding: 8px 12px; border-radius: 15px; font-size: 12px; line-height: 1.35; opacity: 0; animation: rise .5s ease forwards; }
+  .mb.them { background: #e9e9eb; color: #111; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .mb.me { background: #34c759; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .mb:nth-child(2) { animation-delay: .3s; }
+  .mb:nth-child(3) { animation-delay: 1.1s; }
+  .mb:nth-child(4) { animation-delay: 1.9s; }
+  .mb:nth-child(5) { animation-delay: 2.7s; }
+  .mini-tag { align-self: center; font-size: 10px; color: #8e8e93; opacity: 0; animation: rise .5s ease 3.5s forwards; }
+  @keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* ---------- Demo ---------- */
+  .demo { background: var(--navy); padding: 0 0 60px; }
+  .demo .wrap { max-width: 1040px; }
+  .demo-head { text-align: center; color: #fff; padding-bottom: 6px; }
+  .demo-head h2 { font-size: clamp(24px, 4vw, 32px); }
+  .demo-head p { color: #aaa; font-size: 15px; margin-top: 8px; }
+  .demo-head p b { color: var(--gold); }
+  .demo-frame { display: block; width: 100%; border: 0; height: 1600px; border-radius: 14px; }
+  @media (min-width: 840px) { .demo-frame { height: 900px; } }
+
+  /* ---------- How it works ---------- */
+  .how { background: var(--paper); }
+  .how h2, .get h2, .lead h2 { font-size: clamp(24px, 4vw, 34px); margin-bottom: 10px; }
+  .how .intro, .get .intro { color: var(--muted); font-size: 16px; max-width: 40em; margin-bottom: 36px; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .step { background: var(--soft); border-radius: 16px; padding: 26px 22px; position: relative; }
+  .step .num { position: absolute; top: -14px; left: 22px; background: var(--red); color: #fff; font-size: 14px; font-weight: 800; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(230,57,70,.35); }
+  .step svg { display: block; width: 40px; height: 40px; margin-bottom: 14px; }
+  .step h3 { font-size: 18px; margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--muted); }
+  .urgent-box { margin-top: 26px; background: #3d2323; border-left: 5px solid var(--gold); border-radius: 0 14px 14px 0; padding: 20px 24px; color: #f4e9e9; display: flex; gap: 16px; align-items: flex-start; }
+  .urgent-box svg { flex: 0 0 34px; width: 34px; height: 34px; margin-top: 2px; }
+  .urgent-box b { color: var(--gold); text-transform: uppercase; letter-spacing: 1px; font-size: 13px; display: block; margin-bottom: 5px; }
+  .urgent-box p { font-size: 14.5px; }
+
+  /* ---------- What you get ---------- */
+  .get { background: var(--soft); }
+  .price-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: stretch; }
+  .price-card { flex: 0 1 300px; background: var(--navy); color: #fff; border-radius: 18px; padding: 32px 28px; display: flex; flex-direction: column; justify-content: center; text-align: center; box-shadow: 0 14px 40px rgba(26,26,46,.25); }
+  .price-card .amount { font-size: 52px; font-weight: 800; color: var(--gold); line-height: 1; }
+  .price-card .amount span { font-size: 18px; font-weight: 600; color: #c9c9d8; }
+  .price-card .per { color: #c9c9d8; font-size: 14px; margin-top: 6px; }
+  .price-card .free { margin-top: 18px; background: var(--red); border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 700; align-self: center; }
+  .price-card .oneprice { margin-top: 16px; font-size: 13px; color: #8f8fa8; }
+  .feat-list { flex: 1 1 340px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; align-content: center; }
+  .feat { background: #fff; border-radius: 12px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 2px 8px rgba(26,26,46,.06); }
+  .feat svg { flex: 0 0 26px; width: 26px; height: 26px; margin-top: 1px; }
+  .feat b { display: block; font-size: 14.5px; }
+  .feat span { font-size: 13px; color: var(--muted); }
+
+  /* ---------- Lead form ---------- */
+  .lead { background: var(--navy); color: #fff; }
+  .lead .wrap { max-width: 640px; }
+  .lead h2 { text-align: center; }
+  .lead .intro { text-align: center; color: #c9c9d8; font-size: 16px; margin-bottom: 32px; }
+  .lead .intro b { color: var(--gold); }
+  .form-card { background: var(--navy2); border-radius: 18px; padding: 30px 26px; box-shadow: 0 14px 40px rgba(0,0,0,.35); }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: #c9c9d8; margin-bottom: 6px; }
+  .field input { width: 100%; background: #14142a; border: 1px solid #3a3a58; border-radius: 10px; padding: 13px 14px; font-size: 16px; color: #fff; font-family: inherit; outline: none; transition: border-color .15s ease; }
+  .field input:focus { border-color: var(--gold); }
+  .field input::placeholder { color: #55556e; }
+  .form-card .cta { width: 100%; text-align: center; margin-top: 6px; }
+  .form-card .cta:disabled { opacity: .55; cursor: default; transform: none; }
+  .form-err { color: var(--gold); font-size: 14px; text-align: center; margin-top: 12px; display: none; }
+  .success { display: none; text-align: center; padding: 26px 10px 10px; }
+  .success svg { width: 64px; height: 64px; margin-bottom: 16px; }
+  .success h3 { font-size: 22px; color: var(--gold); margin-bottom: 10px; }
+  .success p { color: #c9c9d8; font-size: 15px; max-width: 28em; margin: 0 auto; }
+  .fineprint { text-align: center; font-size: 12.5px; color: #8f8fa8; margin-top: 16px; }
+
+  /* ---------- Footer ---------- */
+  footer { background: #12121f; color: #8f8fa8; padding: 30px 0; text-align: center; font-size: 14px; }
+  footer .logo { font-size: 16px; margin-bottom: 8px; color: #fff; }
+  footer a { color: var(--gold); text-decoration: none; }
+  footer .sep { margin: 0 8px; color: #3a3a58; }
+
+  @media (max-width: 560px) {
+    section { padding: 44px 0; }
+    .cta.ghost { margin-left: 0; margin-top: 12px; }
+    .hero-art { display: none; }
+    .topbar { margin-bottom: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo">Tradie<span class="ai">AI</span><span class="dot">.</span></div>
+      <a class="toplink" href="#lead">Get your first week free</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="kicker on-dark">For Perth tradies</span>
+        <h1>Every missed call is a job your <em>competitor</em> just won.</h1>
+        <p class="sub">You're under a house, on the tools, covered in grease — and the phone rings out. Tradie AI texts them back <b>in 2 seconds</b>, collects the job details, and books it on your calendar. While you stay on the tools.</p>
+        <a class="cta" href="#demo">See it work — live</a>
+        <a class="cta ghost" href="#lead">First week free</a>
+        <div class="hero-note">No new phone number. No app to learn. <b>$249/mo</b>, cancel anytime.</div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="mini-phone">
+          <div class="mini-screen">
+            <div class="mini-head"><b>Your Business</b>SMS</div>
+            <div class="mb them">G'day — sorry we missed your call! What can we help with?</div>
+            <div class="mb me">Hot water system's died, in Baldivis</div>
+            <div class="mb them">Ouch. Can do tomorrow 7:30am — locked in. You'll get a confirmation text.</div>
+            <div class="mb me">Legend 👍</div>
+            <div class="mini-tag">Booked while you were on the tools ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= LIVE DEMO ================= -->
+<section class="demo" id="demo">
+  <div class="wrap">
+    <div class="demo-head">
+      <span class="kicker on-dark">Try it yourself</span>
+      <h2>This demo is wired to the real system</h2>
+      <p>Not a video. Not a mock-up. Tap the button, play the customer — <b>every message runs through the live engine right now.</b></p>
+    </div>
+    <iframe class="demo-frame" src="tradie-ai-sms-demo.html" title="Live Tradie AI SMS demo" loading="lazy"></iframe>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="how" id="how">
+  <div class="wrap">
+    <span class="kicker">How it works</span>
+    <h2>From missed call to booked job. Automatically.</h2>
+    <p class="intro">You don't change anything about how you work. The system just catches what used to fall through the cracks.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <svg viewBox="0 0 40 40" fill="none" stroke="#e63946" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M13 5h-3a3 3 0 0 0-3 3c0 14 11 25 25 25a3 3 0 0 0 3-3v-3.5l-7-3-3 3.5c-4.5-2-8.5-6-10.5-10.5L18 13l-3-8z"/>
+          <line x1="26" y1="6" x2="36" y2="16"/>
+          <line x1="36" y1="6" x2="26" y2="16"/>
+        </svg>
+        <h3>You miss a call</h3>
+        <p>You're on the roof, under a sink, or driving. The phone rings out — like it does a dozen times a week.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <svg viewBox="0 0 40 40" fill="none" stroke="#e63946" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M35 19c0 7.2-6.7 13-15 13-1.9 0-3.8-.3-5.5-.9L6 34l2.2-6.1C6.2 25.7 5 22.5 5 19 5 11.8 11.7 6 20 6s15 5.8 15 13z"/>
+          <line x1="13" y1="16" x2="27" y2="16"/>
+          <line x1="13" y1="22" x2="22" y2="22"/>
+        </svg>
+        <h3>The AI texts them back</h3>
+        <p>Within 2 seconds they get a friendly text. It asks one short question at a time — name, job, suburb, urgency — like a real person would.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <svg viewBox="0 0 40 40" fill="none" stroke="#e63946" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="6" y="8" width="28" height="27" rx="3"/>
+          <line x1="6" y1="16" x2="34" y2="16"/>
+          <line x1="13" y1="4" x2="13" y2="11"/>
+          <line x1="27" y1="4" x2="27" y2="11"/>
+          <path d="M14 25l4 4 8-8"/>
+        </svg>
+        <h3>The job lands on your calendar</h3>
+        <p>Full details and the whole conversation, sitting in your calendar when you next look at your phone. Ring back and win the job.</p>
+      </div>
+    </div>
+    <div class="urgent-box">
+      <svg viewBox="0 0 40 40" fill="none" stroke="#ffd166" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 5L3 34h34L20 5z"/>
+        <line x1="20" y1="16" x2="20" y2="25"/>
+        <circle cx="20" cy="29.5" r="0.5" fill="#ffd166"/>
+      </svg>
+      <div>
+        <b>Built-in emergency detector</b>
+        <p>Burst pipe? Gas leak? Sparking switchboard? The moment a customer's message contains a danger keyword, a red <strong>URGENT</strong> alert hits your calendar with their number — before the AI has even finished replying. Emergencies jump the queue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHAT YOU GET ================= -->
+<section class="get" id="pricing">
+  <div class="wrap">
+    <span class="kicker">What you get</span>
+    <h2>One flat price. The whole toolkit.</h2>
+    <p class="intro">Everything below is included — no add-ons, no lock-in contract, no per-message fees.</p>
+    <div class="price-row">
+      <div class="price-card">
+        <div class="amount">$249<span>/mo</span></div>
+        <div class="per">flat. everything included.</div>
+        <div class="free">First week FREE</div>
+        <div class="oneprice">One saved job a month and it's paid for itself.</div>
+      </div>
+      <div class="feat-list">
+        <div class="feat">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#e63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 13c0 4.9-4.5 9-10 9-1.3 0-2.6-.2-3.7-.6L4 23l1.5-4.1C4.1 17.4 3 15.3 3 13c0-4.9 4.5-9 10-9s10 4.1 10 9z"/></svg>
+          <div><b>Missed-call text-back</b><span>Every rang-out call gets a reply in 2 seconds, 24/7.</span></div>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#e63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L2 22h22L13 3z"/><line x1="13" y1="10" x2="13" y2="16"/><circle cx="13" cy="19" r="0.4" fill="#e63946"/></svg>
+          <div><b>Emergency detector</b><span>Danger keywords trigger an instant URGENT calendar alert.</span></div>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#e63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="13" r="9"/><path d="M13 4V2M13 24v-2M4 13H2M24 13h-2"/><path d="M13 8v5l3.5 2"/></svg>
+          <div><b>Morning brief</b><span>Your day's jobs texted to you at 6:45am — before the first coffee.</span></div>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#e63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V10M13 22V4M22 22v-8"/><path d="M2 22h22"/></svg>
+          <div><b>Quote chaser</b><span>Automatically follows up quotes you sent — so you don't have to.</span></div>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#e63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="13" r="10"/><path d="M13 7v6l4 3"/></svg>
+          <div><b>No-show reminders</b><span>Customers get reminded before you drive across town for nothing.</span></div>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#e63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3l3.1 6.3 6.9 1-5 4.9 1.2 6.8L13 18.8 6.8 22l1.2-6.8-5-4.9 6.9-1L13 3z"/></svg>
+          <div><b>Review collector</b><span>Happy customers get a nudge to leave you a Google review.</span></div>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#e63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="13" cy="6" rx="8" ry="3"/><path d="M5 6v14c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M5 13c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+          <div><b>Your own customer database</b><span>Every caller, job and conversation — yours, building over time.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LEAD FORM ================= -->
+<section class="lead" id="lead">
+  <div class="wrap">
+    <span class="kicker on-dark" style="display:block;text-align:center;">Get started</span>
+    <h2>Try it free for a week</h2>
+    <p class="intro">Leave your details and Keiren will call you back — <b>usually the same day</b>. Set-up takes one phone call. Nothing to install.</p>
+    <div class="form-card">
+      <form id="leadform" novalidate>
+        <div class="field">
+          <label for="f-name">Your name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Dave Smith" required>
+        </div>
+        <div class="field">
+          <label for="f-mobile">Mobile</label>
+          <input id="f-mobile" name="mobile" type="tel" autocomplete="tel" placeholder="04xx xxx xxx" required>
+        </div>
+        <div class="field">
+          <label for="f-trade">Your trade</label>
+          <input id="f-trade" name="trade" type="text" placeholder="Plumber, sparky, mechanic…" required>
+        </div>
+        <div class="field">
+          <label for="f-suburb">Suburb</label>
+          <input id="f-suburb" name="suburb" type="text" placeholder="Baldivis" required>
+        </div>
+        <button class="cta" type="submit" id="f-submit">Claim my free week</button>
+        <div class="form-err" id="f-err">Please fill in all four fields — or text Keiren on 0410 601 249.</div>
+      </form>
+      <div class="success" id="f-success">
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle cx="32" cy="32" r="29" stroke="#ffd166" stroke-width="3"/>
+          <path d="M20 33l8 8 16-17" stroke="#ffd166" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Got it — you're in the system.</h3>
+        <p id="f-success-msg">Nice one. Your details just landed on Keiren's calendar and he'll call you back shortly. (Yes — the same system you just watched in the demo filed you as a lead.)</p>
+      </div>
+    </div>
+    <div class="fineprint">No spam, no lock-in. Your details go straight to Keiren and nowhere else.</div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="logo">Tradie<span class="ai" style="color:#ffd166">AI</span><span class="dot" style="color:#e63946">.</span></div>
+    Keiren Paterson<span class="sep">·</span>Perth WA<span class="sep">·</span><a href="mailto:keiren.paterson7@gmail.com">keiren.paterson7@gmail.com</a><span class="sep">·</span><a href="sms:0410601249">0410 601 249</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var HOOK = "https://hook.eu2.make.com/c6xt5j45bwqg8pcit0d9v8p476gl0x4p";
+  var form = document.getElementById("leadform");
+  var err = document.getElementById("f-err");
+  var btn = document.getElementById("f-submit");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    err.style.display = "none";
+
+    var name = document.getElementById("f-name").value.trim();
+    var mobile = document.getElementById("f-mobile").value.trim();
+    var trade = document.getElementById("f-trade").value.trim();
+    var suburb = document.getElementById("f-suburb").value.trim();
+
+    if (!name || !mobile || !trade || !suburb) {
+      err.textContent = "Please fill in all four fields — or text Keiren on 0410 601 249.";
+      err.style.display = "block";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+
+    fetch(HOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer_name: name + " (" + trade + ", " + suburb + ")",
+        customer_phone: mobile,
+        service: "WEBSITE LEAD",
+        preferred_callback_time: "asap"
+      })
+    })
+      .then(function (r) { return r.text(); })
+      .then(function (text) {
+        var ok = false;
+        // Make replies {"success":true,"type":"lead"} when the scenario answers
+        // live, or plain "Accepted" when it queues the lead for processing.
+        try { ok = !!JSON.parse(text).success; } catch (e) { ok = text.trim() === "Accepted"; }
+        if (ok) {
+          form.style.display = "none";
+          document.getElementById("f-success").style.display = "block";
+        } else {
+          throw new Error("unexpected response");
+        }
+      })
+      .catch(function () {
+        btn.disabled = false;
+        btn.textContent = "Claim my free week";
+        err.textContent = "Hmm, that didn't go through. Try again in a sec — or text Keiren on 0410 601 249.";
+        err.style.display = "block";
+      });
+  });
+})();
+</script>
+</body>
+</html>
